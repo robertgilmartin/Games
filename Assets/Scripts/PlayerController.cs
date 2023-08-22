@@ -19,26 +19,34 @@ public class PlayerController : MonoBehaviour
 
         //We are setting to 1 the bool variable from the animator that the sprite has.
         animator.SetBool("isAlive", true);
+        
     }
 
     //Fixed Update is a method that updates the game when it's needed.
     private void FixedUpdate()
     {
-        //Here we are updating the Vector2 rigid body x parameter. What velocity defines is the distance moved in each second. 
-        if (rigidBody.velocity.x < runSpeed)
+        //Let's put a condition, that the rabbit can only run if we are in GameState == InGame.
+        GameManager.GameState currGameState = GameManager.GetInstance().currentGameState;
+        if (currGameState == GameManager.GameState.InGame)
         {
-            //We instantate the new velocity vector, to allways have the 1.5 x velocity.
-            rigidBody.velocity = new Vector2(runSpeed, rigidBody.velocity.y);
-        }
+            //Here we are updating the Vector2 rigid body x parameter. What velocity defines is the distance moved in each second. 
+            if (rigidBody.velocity.x < runSpeed)
+            {
+                //We instantate the new velocity vector, to allways have the 1.5 x velocity.
+                rigidBody.velocity = new Vector2(runSpeed, rigidBody.velocity.y);
+            }
+        }  
     }
 
     // Update is called once per frame
     void Update()
     {
+        bool canJump = GameManager.GetInstance().currentGameState == GameManager.GameState.InGame;
         bool isOntheGround = IsOnTheGround();
         animator.SetBool("isGrounded", isOntheGround);
-        if((Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W)) && isOntheGround)
+        if((Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W)) && isOntheGround && canJump)
         {
+            print("Hello");
             Jump();
         }
     }
